@@ -3,14 +3,12 @@ const monthPicker = document.getElementById('month-picker');
 const darkToggle = document.getElementById('dark-mode-toggle');
 
 // --- 1. THEME ENGINE ---
-// Initial theme load
 const savedTheme = localStorage.getItem('theme') || 'light';
 if (savedTheme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
-    darkToggle.checked = true; // Make sure the switch is in the "ON" position
+    darkToggle.checked = true;
 }
 
-// Toggle logic
 darkToggle.addEventListener('change', () => {
     const isDark = darkToggle.checked;
     const newTheme = isDark ? 'dark' : 'light';
@@ -19,38 +17,33 @@ darkToggle.addEventListener('change', () => {
 });
 
 // --- 2. MONTH & GRID ENGINE ---
-// Set default view to current month (March 2026 for now)
+// Default to March 2026
 const defaultMonth = "2026-03"; 
 monthPicker.value = defaultMonth;
 
-// Core function: Draw the entire month's grid
 function generateGrid() {
-    grid.innerHTML = ""; // Clear existing cards
-    
-    // Break down "YYYY-MM" string (e.g., "2026", "3")
+    grid.innerHTML = ""; 
     const [year, month] = monthPicker.value.split('-').map(Number);
     
-    // Trick to get last day of month (Month is 1-indexed, so `month` is next month, day 0 is last day of this month)
+    // Get total days in the selected month
     const daysInMonth = new Date(year, month, 0).getDate();
 
     for (let day = 1; day <= daysInMonth; day++) {
-        // Create a unique ID for storage (e.g., "2026-3-12")
         const dateKey = `${year}-${month}-${day}`;
         const card = createDayCard(day, dateKey);
         grid.appendChild(card);
     }
 }
 
-// Function to build a single card
+// Function to build a single card (DATE REMOVED)
 function createDayCard(dayNum, dateKey) {
     const card = document.createElement('div');
     card.className = 'day-card';
     card.innerHTML = `
-        <div class="day-title">Day ${dayNum}</div>
-        <input type="text" class="note-input" id="note-${dateKey}" placeholder="Date">
+        <div class="day-title" style="font-weight: bold; margin-bottom: 10px;">Day ${dayNum}</div>
         
         <div class="habit-add-row" style="display: flex; gap: 5px; margin-top: 10px;">
-            <input type="text" class="habit-input" placeholder="New Habit..." style="flex:1">
+            <input type="text" class="habit-input" placeholder="Todays Goal..." style="flex:1; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
             <button class="add-btn" style="background:#6c5ce7; color:white; border:none; border-radius:4px; padding:5px 12px; cursor:pointer;">+</button>
         </div>
         
@@ -61,53 +54,62 @@ function createDayCard(dayNum, dateKey) {
     return card;
 }
 
-// Function to handle specific card's loading, saving, and interactions
 function setupCardLogic(card, dateKey) {
-    const noteInput = card.querySelector('.note-input');
     const taskList = card.querySelector('.task-list');
     const habitInput = card.querySelector('.habit-input');
     const addBtn = card.querySelector('.add-btn');
 
-    // Load saved data for this specific dateKey
-    noteInput.value = localStorage.getItem(`note-${dateKey}`) || "";
+    // Load saved habits from LocalStorage
     const savedHabits = JSON.parse(localStorage.getItem(`habits-${dateKey}`)) || [];
     
-    // Draw saved habits
     savedHabits.forEach(h => {
         addHabitToDOM(taskList, h.text, h.completed, dateKey);
     });
 
-    // Save notes as you type
-    noteInput.oninput = () => localStorage.setItem(`note-${dateKey}`, noteInput.value);
-
-    // Function to add a single habit row
+    // Function to add a single habit row to the screen
     function addHabitToDOM(list, text, completed, key) {
         const li = document.createElement('li');
+        li.style.display = "flex";
+        li.style.alignItems = "center";
+        li.style.marginBottom = "8px";
         
         const checkbox = document.createElement('input');
-        checkbox.type = "checkbox"; checkbox.checked = completed;
+        checkbox.type = "checkbox"; 
+        checkbox.checked = completed;
         checkbox.style.cursor = "pointer";
 
         const span = document.createElement('span');
         span.textContent = text;
-        span.style.flex = "1"; span.style.marginLeft = "10px";
-        if (completed) span.classList.add('completed-span');
+        span.style.flex = "1"; 
+        span.style.marginLeft = "10px";
+        if (completed) span.style.textDecoration = "line-through";
 
         const delBtn = document.createElement('button');
-        delBtn.textContent = "Delete"; delBtn.classList.add('delete-btn');
+        delBtn.textContent = "×"; 
+        delBtn.style.background = "none";
+        delBtn.style.border = "none";
+        delBtn.style.color = "#ff7675";
+        delBtn.style.cursor = "pointer";
+        delBtn.style.fontSize = "18px";
+        delBtn.style.fontWeight = "bold";
 
-        // Logic
+        // Toggle completion
         checkbox.onchange = () => {
-            span.classList.toggle('completed-span', checkbox.checked);
+            span.style.textDecoration = checkbox.checked ? "line-through" : "none";
             saveHabits(key, list);
         };
-        delBtn.onclick = () => { li.remove(); saveHabits(key, list); };
+
+        // Delete habit
+        delBtn.onclick = () => { 
+            li.remove(); 
+            saveHabits(key, list); 
+        };
 
         li.append(checkbox, span, delBtn);
         list.appendChild(li);
     }
 
-    // Function to collect all list items and save them to storage
+    // Function to save current state to LocalStorage
     function saveHabits(key, list) {
         const currentHabits = Array.from(list.querySelectorAll('li')).map(li => ({
             text: li.querySelector('span').textContent,
@@ -116,7 +118,6 @@ function setupCardLogic(card, dateKey) {
         localStorage.setItem(`habits-${key}`, JSON.stringify(currentHabits));
     }
 
-    // Add function: Button or Enter key
     const runAdd = () => {
         const hText = habitInput.value.trim();
         if(hText) {
@@ -125,12 +126,13 @@ function setupCardLogic(card, dateKey) {
             habitInput.value = "";
         }
     };
+
     addBtn.onclick = runAdd;
     habitInput.onkeypress = (e) => { if(e.key === 'Enter') runAdd(); };
 }
 
-// Re-generate grid when month picker changes
+// Refresh grid when user picks a different month
 monthPicker.addEventListener('change', generateGrid);
 
-// Run the engine on start
+// Start the app
 generateGrid();
