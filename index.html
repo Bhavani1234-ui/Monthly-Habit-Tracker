@@ -3,35 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Habit Tracker</title>
+    <title>Modern Habit Tracker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="main-container">
-        <div class="header">
+        <header>
             <h1>Habit Tracker</h1>
-            
             <div class="controls-panel">
                 <div class="picker-group">
-                    <label for="month-picker">Viewing:</label>
+                    <span class="label-text">Viewing:</span>
                     <input type="month" id="month-picker" class="modern-input">
                 </div>
-
                 <div class="toggle-group">
                     <span class="label-text">Dark Mode</span>
                     <label class="switch">
                         <input type="checkbox" id="dark-mode-toggle">
-                        <span class="slider round"></span>
+                        <span class="slider"></span>
                     </label>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <div class="tracker-grid" id="main-grid">
+        <div id="main-grid" class="tracker-grid">
             </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

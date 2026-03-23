@@ -1,173 +1,151 @@
-/* --- CSS VARIABLES (Theming) --- */
 :root {
-    --bg-color: #f0f2f5; /* Light Gray Background */
-    --main-bg: #fdfdfd;  /* Card Background */
-    --text-color: #333;
-    --border-color: #eee;
-    --accent: #6c5ce7;   /* Default Purple */
-    --toggle-teal: #1abc9c; /* Exact color from your screenshot! */
+    --bg-color: #f0f2f5;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --text-color: #1a1a1a;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --accent: #6c5ce7;
+    --toggle-color: #1abc9c;
 }
 
 [data-theme="dark"] {
-    --bg-color: #1a1a1a;
-    --main-bg: #2d2d2d;
-    --text-color: #f0f0f0;
-    --border-color: #444;
+    --bg-color: #121212;
+    --card-bg: rgba(30, 30, 30, 0.8);
+    --text-color: #ffffff;
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* --- Base Styling --- */
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--bg-color);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
     color: var(--text-color);
-    margin: 0; padding: 0;
-    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+    transition: all 0.4s ease;
 }
 
-.main-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-}
-
-/* --- Header & Controls Panel --- */
-.header {
-    background: var(--main-bg);
+/* --- PREMIUM HEADER --- */
+header {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin: 20px;
     padding: 20px 40px;
-    border-radius: 12px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.controls-panel { display: flex; gap: 30px; align-items: center; }
-.picker-group, .toggle-group { display: flex; align-items: center; gap: 10px; }
-.label-text { font-weight: 500; font-size: 1.1rem; }
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: -1px;
+}
+
+.controls-panel {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.picker-group, .toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
 .modern-input {
     padding: 8px;
+    border-radius: 8px;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
     background: var(--bg-color);
     color: var(--text-color);
 }
 
-/* --- !!! THE EXACT TOGGLE SWITCH STYLING !!! --- */
-/* (Based on your image_1.png) */
+/* --- THE CUSTOM TOGGLE --- */
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;  /* Match the width in your screenshot */
-    height: 34px; /* Match the height */
+    width: 50px;
+    height: 28px;
 }
 
-/* Hide the native checkbox, but keep it accessible */
 .switch input { opacity: 0; width: 0; height: 0; }
 
-/* The slider track */
 .slider {
     position: absolute;
     cursor: pointer;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #dcdcdc; /* Unchecked gray */
-    transition: 0.4s;
-    border-radius: 34px; /* Perfectly round edges */
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
 }
 
-/* The circle (the white knob) */
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px; width: 26px;
+    height: 20px; width: 20px;
     left: 4px; bottom: 4px;
     background-color: white;
-    transition: 0.4s;
+    transition: .4s;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* State: Checked (ON) */
-input:checked + .slider {
-    background-color: var(--toggle-teal); /* The beautiful teal color! */
-}
+input:checked + .slider { background-color: var(--toggle-color); }
+input:checked + .slider:before { transform: translateX(22px); }
 
-/* Move the knob when checked */
-input:checked + .slider:before {
-    transform: translateX(26px); /* Moves it to the right */
-}
-
-/* --- Tracker Grid & Day Cards --- */
+/* --- THE SMART GRID --- */
 .tracker-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
+    padding: 20px;
 }
 
 .day-card {
-    background: var(--main-bg);
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border-radius: 18px;
     border: 1px solid var(--border-color);
-    transition: transform 0.2s, background-color 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
 }
 
 .day-card:hover { transform: translateY(-5px); }
 
-.day-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--accent);
-    margin-bottom: 10px;
-}
+.day-title { font-weight: bold; color: var(--accent); margin-bottom: 10px; }
 
-.note-input, .habit-input {
-    width: 100%; padding: 8px; margin-top: 5px;
-    border-radius: 6px; border: 1px solid var(--border-color);
+.habit-input {
+    width: 100%; padding: 10px; border-radius: 8px;
+    border: 1px solid var(--border-color);
     background: var(--bg-color); color: var(--text-color);
+    box-sizing: border-box;
 }
 
-.task-list li {
-    display: flex; align-items: center;
-    padding: 8px 0; border-bottom: 1px solid var(--border-color);
-}
-.completed-span { text-decoration: line-through; color: #a0a0a0; }
-.delete-btn {
-    background: #ff7675; color: white; border: none;
-    border-radius: 4px; padding: 2px 8px; cursor: pointer;
-}
- /* --- EXISTING STYLES --- */
-.tracker-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.day-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* --- MOBILE RESPONSIVE MAGIC --- */
-@media (max-width: 600px) {
-    .tracker-grid {
-        grid-template-columns: 1fr; /* 1 card per row on small screens */
-        padding: 10px;
-    }
-    
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
     header {
         flex-direction: column;
+        gap: 20px;
+        padding: 20px;
         text-align: center;
-        gap: 15px;
     }
+    .controls-panel { flex-direction: column; gap: 15px; }
+}
+/* --- CALENDAR ICON DARK MODE FIX --- */
+[data-theme="dark"] .modern-input::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* This turns the black icon white */
+    cursor: pointer;
+}
 
-    .day-card {
-        margin-bottom: 10px;
-    }
+/* Optional: Make the input text and icon look more uniform */
+.modern-input {
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.modern-input:focus {
+    border-color: var(--accent);
 }
